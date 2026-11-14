@@ -1,0 +1,23 @@
+{
+  "name": "animalauncher",
+  "version": "1.0.0",
+  "description": "Launcher de apps com GIFs e vídeos como ícones",
+  "main": "main.js",
+  "author": "voce",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win portable --publish never"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.animalauncher.app",
+    "productName": "AnimaLauncher",
+    "files": ["main.js", "preload.js", "index.html", "renderer.js", "style.css"],
+    "win": { "target": "portable" },
+    "portable": { "artifactName": "AnimaLauncher.exe" }
+  }
+}
