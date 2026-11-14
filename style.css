@@ -26,3 +26,5 @@ input { background: #0f1115; border: 1px solid #333a49; color: #e8eaf0; padding:
 #menu { position: fixed; background: #262b38; border-radius: 8px; padding: 4px; display: flex; flex-direction: column; box-shadow: 0 8px 24px rgba(0,0,0,.5); }
 #menu button { background: transparent; text-align: left; }
 #menu button:hover { background: #343a4b; }
+label.check { flex-direction: row; align-items: center; gap: 8px; color: #e8eaf0; }
+label.check input { flex: none; }

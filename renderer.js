@@ -17,6 +17,47 @@ function mediaEl(url) {
   return i;
 }
 
+const MIME = { gif: 'image/gif', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', webp: 'image/webp',
+  mp4: 'video/mp4', webm: 'video/webm', mov: 'video/quicktime', mkv: 'video/x-matroska' };
+
+// Captura o primeiro quadro do GIF/vídeo como PNG 256x256 (o Windows não anima ícones)
+async function framePng(blob, isVideo) {
+  const url = URL.createObjectURL(blob);
+  try {
+    const size = 256;
+    const c = document.createElement('canvas');
+    c.width = c.height = size;
+    let el, w, h;
+    if (isVideo) {
+      el = document.createElement('video');
+      el.muted = true; el.src = url;
+      await new Promise((res, rej) => { el.onloadeddata = res; el.onerror = rej; });
+      await new Promise(res => { el.onseeked = res; el.currentTime = 0.1; });
+      w = el.videoWidth; h = el.videoHeight;
+    } else {
+      el = new Image(); el.src = url;
+      await el.decode();
+      w = el.naturalWidth; h = el.naturalHeight;
+    }
+    const s = Math.max(size / w, size / h);
+    c.getContext('2d').drawImage(el, (size - w * s) / 2, (size - h * s) / 2, w * s, h * s);
+    return c.toDataURL('image/png');
+  } finally { URL.revokeObjectURL(url); }
+}
+
+async function createShortcut(a) {
+  let png = null;
+  if (a.mediaPath) {
+    try {
+      const ext = a.mediaPath.split('.').pop().toLowerCase();
+      const bytes = await window.api.readFile(a.mediaPath);
+      png = await framePng(new Blob([bytes], { type: MIME[ext] || '' }), VIDEO_EXT.test(a.mediaPath));
+    } catch (e) { console.error(e); }
+  }
+  const err = await window.api.shortcut(a.id, png);
+  alert(err ? 'Erro: ' + err : 'Atalho criado na área de trabalho!');
+}
+
 function render() {
   const grid = $('grid');
   grid.innerHTML = '';
@@ -94,9 +135,13 @@ $('saveBtn').onclick = async () => {
   apps = await window.api.save({ id: editing, name, target: form.target, mediaSrc: form.mediaSrc });
   $('modal').hidden = true;
   render();
+  if ($('fShortcut').checked) {
+    await createShortcut(editing ? apps.find(a => a.id === editing) : apps[apps.length - 1]);
+  }
 };
 
 $('mEdit').onclick = () => { $('menu').hidden = true; openModal(apps.find(a => a.id === menuId)); };
+$('mShortcut').onclick = () => { $('menu').hidden = true; createShortcut(apps.find(a => a.id === menuId)); };
 $('mRemove').onclick = async () => {
   $('menu').hidden = true;
   if (confirm('Remover este app da lista?')) { apps = await window.api.remove(menuId); render(); }

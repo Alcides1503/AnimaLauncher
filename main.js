@@ -13,10 +13,20 @@ function save(list) {
   fs.mkdirSync(app.getPath('userData'), { recursive: true });
   fs.writeFileSync(dbFile(), JSON.stringify(list, null, 2));
 }
+function pngToIco(png) {
+  const header = Buffer.alloc(6);
+  header.writeUInt16LE(0, 0); header.writeUInt16LE(1, 2); header.writeUInt16LE(1, 4);
+  const entry = Buffer.alloc(16); // largura/altura 0 = 256px
+  entry.writeUInt16LE(1, 4); entry.writeUInt16LE(32, 6);
+  entry.writeUInt32LE(png.length, 8); entry.writeUInt32LE(22, 12);
+  return Buffer.concat([header, entry, png]);
+}
+
 function withUrls(list) {
   return list.map(a => ({
     ...a,
-    mediaUrl: a.media ? pathToFileURL(path.join(mediaDir(), a.media)).href : null
+    mediaUrl: a.media ? pathToFileURL(path.join(mediaDir(), a.media)).href : null,
+    mediaPath: a.media ? path.join(mediaDir(), a.media) : null
   }));
 }
 
@@ -77,6 +87,24 @@ ipcMain.handle('apps:remove', (_e, id) => {
   list = list.filter(a => a.id !== id);
   save(list);
   return withUrls(list);
+});
+
+ipcMain.handle('file:read', (_e, p) => fs.readFileSync(p));
+
+ipcMain.handle('apps:shortcut', (_e, id, pngDataUrl) => {
+  const entry = load().find(a => a.id === id);
+  if (!entry) return 'App não encontrado';
+  const opts = { target: entry.target, cwd: path.dirname(entry.target), description: entry.name };
+  if (pngDataUrl) {
+    const iconDir = path.join(app.getPath('userData'), 'icons');
+    fs.mkdirSync(iconDir, { recursive: true });
+    const ico = path.join(iconDir, id + '.ico');
+    fs.writeFileSync(ico, pngToIco(Buffer.from(pngDataUrl.split(',')[1], 'base64')));
+    opts.icon = ico; opts.iconIndex = 0;
+  }
+  const safe = entry.name.replace(/[\\/:*?"<>|]/g, '_');
+  const lnk = path.join(app.getPath('desktop'), safe + '.lnk');
+  return shell.writeShortcutLink(lnk, 'create', opts) ? null : 'Falha ao criar o atalho';
 });
 
 ipcMain.handle('apps:launch', async (_e, target) => {
