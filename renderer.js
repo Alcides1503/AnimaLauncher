@@ -135,12 +135,18 @@ $('saveBtn').onclick = async () => {
   apps = await window.api.save({ id: editing, name, target: form.target, mediaSrc: form.mediaSrc });
   $('modal').hidden = true;
   render();
+  const savedApp = editing ? apps.find(a => a.id === editing) : apps[apps.length - 1];
+  if ($('fWidget').checked) {
+    const werr = await window.api.widgetEnable(savedApp.id);
+    if (werr) alert('Erro: ' + werr);
+  }
   if ($('fShortcut').checked) {
     await createShortcut(editing ? apps.find(a => a.id === editing) : apps[apps.length - 1]);
   }
 };
 
 $('mEdit').onclick = () => { $('menu').hidden = true; openModal(apps.find(a => a.id === menuId)); };
+$('mWidget').onclick = async () => { $('menu').hidden = true; const e = await window.api.widgetEnable(menuId); if (e) alert('Erro: ' + e); };
 $('mShortcut').onclick = () => { $('menu').hidden = true; createShortcut(apps.find(a => a.id === menuId)); };
 $('mRemove').onclick = async () => {
   $('menu').hidden = true;

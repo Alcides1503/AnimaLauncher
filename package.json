@@ -16,7 +16,7 @@
   "build": {
     "appId": "com.animalauncher.app",
     "productName": "AnimaLauncher",
-    "files": ["main.js", "preload.js", "index.html", "renderer.js", "style.css"],
+    "files": ["main.js", "preload.js", "index.html", "renderer.js", "style.css", "widget.html", "widget.js"],
     "win": { "target": "portable" },
     "portable": { "artifactName": "AnimaLauncher.exe" }
   }

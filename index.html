@@ -26,7 +26,8 @@
         <div class="row"><input id="fMedia" readonly placeholder="Escolha o GIF ou vídeo"><button id="pickMedia" type="button">Procurar</button></div>
       </label>
       <div id="preview"></div>
-      <label class="check"><input type="checkbox" id="fShortcut" checked> Criar atalho na área de trabalho</label>
+      <label class="check"><input type="checkbox" id="fWidget" checked> Mostrar na área de trabalho como GIF animado</label>
+      <label class="check"><input type="checkbox" id="fShortcut"> Criar atalho comum na área de trabalho (ícone parado)</label>
       <div class="row end">
         <button id="cancel" type="button" class="ghost">Cancelar</button>
         <button id="saveBtn" type="button">Salvar</button>
@@ -36,6 +37,7 @@
 
   <div id="menu" hidden>
     <button id="mEdit">Editar</button>
+    <button id="mWidget">Mostrar na área de trabalho (animado)</button>
     <button id="mShortcut">Atalho na área de trabalho</button>
     <button id="mRemove">Remover</button>
   </div>
