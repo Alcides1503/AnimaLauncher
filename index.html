@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' file: data: blob:; media-src 'self' file: blob:; style-src 'self' 'unsafe-inline'">
+  <title>AnimaLauncher</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>AnimaLauncher</h1>
+    <button id="addBtn">+ Adicionar app</button>
+  </header>
+
+  <main id="grid"></main>
+  <p id="empty" hidden>Nenhum app ainda. Clique em “Adicionar app”.</p>
+
+  <div id="modal" hidden>
+    <div class="card">
+      <h2 id="modalTitle">Adicionar app</h2>
+      <label>Nome<input id="fName" placeholder="Ex: Spotify"></label>
+      <label>App / atalho
+        <div class="row"><input id="fTarget" readonly placeholder="Escolha o .exe ou .lnk"><button id="pickTarget" type="button">Procurar</button></div>
+      </label>
+      <label>GIF / vídeo / imagem
+        <div class="row"><input id="fMedia" readonly placeholder="Escolha o GIF ou vídeo"><button id="pickMedia" type="button">Procurar</button></div>
+      </label>
+      <div id="preview"></div>
+      <label class="check"><input type="checkbox" id="fShortcut" checked> Criar atalho na área de trabalho</label>
+      <div class="row end">
+        <button id="cancel" type="button" class="ghost">Cancelar</button>
+        <button id="saveBtn" type="button">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="menu" hidden>
+    <button id="mEdit">Editar</button>
+    <button id="mShortcut">Atalho na área de trabalho</button>
+    <button id="mRemove">Remover</button>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
